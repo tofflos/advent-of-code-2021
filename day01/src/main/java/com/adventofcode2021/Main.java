@@ -12,27 +12,19 @@ public class Main {
                 .mapToInt(Integer::parseInt)
                 .toArray();
 
-        var increments = 0;
+        System.out.println("Day 1a: " + calculate(measurements, 1));
+        System.out.println("Day 1b: " + calculate(measurements, 3));
+    }
 
-        for (int i = 0; i < measurements.length - 1; i++) {
-            if (measurements[i] < measurements[i + 1]) {
-                increments++;
+    static int calculate(int[] measurements, int offset) {
+        var count = 0;
+
+        for (int i = 0; i < measurements.length - offset; i++) {
+            if (measurements[i] < measurements[i + offset]) {
+                count++;
             }
         }
 
-        System.out.println("Day 1a: " + increments);
-
-        increments = 0;
-
-        for (int i = 0; i < measurements.length - 3; i++) {
-            var sum1 = measurements[i + 0] + measurements[i + 1] + measurements[i + 2];
-            var sum2 = measurements[i + 1] + measurements[i + 2] + measurements[i + 3];
-
-            if (sum1 < sum2) {
-                increments++;
-            }
-        }
-
-        System.out.println("Day 1b: " + increments);
+        return count;
     }
 }

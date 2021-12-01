@@ -12,8 +12,8 @@ public class Main {
                 .mapToInt(Integer::parseInt)
                 .toArray();
 
-        System.out.println("Day 1a: " + calculate(measurements, 1));
-        System.out.println("Day 1b: " + calculate(measurements, 3));
+        System.out.println("Part 1: " + calculate(measurements, 1));
+        System.out.println("Part 2: " + calculate(measurements, 3));
     }
 
     static int calculate(int[] measurements, int offset) {

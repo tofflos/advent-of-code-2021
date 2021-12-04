@@ -40,21 +40,24 @@ public class Main {
     }
 
     static List<Board> play(List<Integer> numbers, List<Board> boards) {
-        var outcome = new ArrayList<Board>();
+        var results = new ArrayList<Board>();
 
         for (var number : numbers) {
-            for (var board : boards) {
+            var iterator = boards.iterator();
+            
+            while(iterator.hasNext()) {
+                var board = iterator.next();
+                
                 board.mark(number);
 
                 if (board.hasWinningColumn() || board.hasWinningRow()) {
-                    outcome.add(board);
+                    results.add(board);
+                    iterator.remove();
                 }
             }
-
-            boards.removeAll(outcome);
         }
 
-        return outcome;
+        return results;
     }
 }
 

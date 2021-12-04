@@ -6,115 +6,83 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.IntStream;
 
 public class Main {
 
     public static void main(String[] args) throws IOException {
 
         var lines = Files.lines(Paths.get("4.in")).map(String::trim).toList();
-        var numbers = Arrays.stream(lines.get(0).split(",")).mapToInt(Integer::parseInt).toArray();
-        var boards = new ArrayList<List<List<Tile>>>();
-        var board = new ArrayList<List<Tile>>();
+        var numbers = Arrays.stream(lines.get(0).split(",")).map(Integer::parseInt).toList();
+        var results = play(numbers, parse(lines));
+
+        System.out.println("Part 1: " + results.get(0).calculateScore());
+        System.out.println("Part 2: " + results.get(results.size() - 1).calculateScore());
+    }
+
+    static List<Board> parse(List<String> lines) {
+        var boards = new ArrayList<Board>();
+        var board = new Board();
 
         for (var line : lines.subList(2, lines.size())) {
             if ("".equals(line)) {
                 boards.add(board);
-                board = new ArrayList<>();
+                board = new Board();
             } else {
-                board.add(Arrays.stream(line.split("\\s+")).map(Integer::parseInt).map(Tile::new).toList());
+                board.rows().add(Arrays.stream(line.split("\\s+")).map(Integer::parseInt).toList());
             }
         }
 
         boards.add(board);
 
-        System.out.println("Part 1: " + part1(numbers, boards));
-
-        boards.stream().forEach(Main::clear);
-
-        System.out.println("Part 2: " + part2(numbers, boards));
+        return boards;
     }
 
-    static int part1(int[] numbers, List<List<List<Tile>>> boards) {
-        var score = Integer.MIN_VALUE;
+    static List<Board> play(List<Integer> numbers, List<Board> boards) {
+        var outcome = new ArrayList<Board>();
 
-        outer:
         for (var number : numbers) {
             for (var board : boards) {
-                mark(number, board);
+                board.mark(number);
 
-                if (rows(board) || columns(board)) {
-                    score = score(number, board);
-                    break outer;
-                }
-            }
-        }
-
-        return score;
-    }
-
-    static int part2(int[] numbers, List<List<List<Tile>>> boards) {
-        var score = Integer.MIN_VALUE;
-
-        for (var number : numbers) {
-
-            boards.stream().forEach(board -> mark(number, board));
-
-            if (boards.size() == 1 && (rows(boards.get(0)) || columns(boards.get(0)))) {
-                score = score(number, boards.get(0));
-                break;
-            }
-
-            boards.removeIf(b -> rows(b) || columns(b));
-        }
-
-        return score;
-    }
-
-    static int score(int number, List<List<Tile>> board) {
-        return board.stream().flatMap(List::stream).filter(t -> !t.marked).mapToInt(t -> t.number).sum() * number;
-    }
-
-    static void clear(List<List<Tile>> board) {
-        board.stream().flatMap(List::stream).forEach(t -> t.marked = false);
-    }
-
-    static void mark(int number, List<List<Tile>> board) {
-        board.stream().flatMap(List::stream).filter(t -> t.number == number).forEach(t -> t.marked = true);
-    }
-
-    static boolean rows(List<List<Tile>> board) {
-        return board.stream().anyMatch(row -> row.stream().allMatch(t -> t.marked));
-    }
-
-    static boolean columns(List<List<Tile>> board) {
-        var columns = false;
-
-        for (int x = 0; x < board.get(0).size(); x++) {
-            var b = true;
-
-            for (int y = 0; y < board.size(); y++) {
-                if (!board.get(y).get(x).marked) {
-                    b = false;
-                    break;
+                if (board.hasWinningColumn() || board.hasWinningRow()) {
+                    outcome.add(board);
                 }
             }
 
-            if (b) {
-                columns = true;
-                break;
-            }
+            boards.removeAll(outcome);
         }
 
-        return columns;
+        return outcome;
     }
 }
 
-class Tile {
+record Board(List<Integer> marks, List<List<Integer>> rows) {
 
-    int number;
-    boolean marked;
+    Board() {
+        this(new ArrayList<>(), new ArrayList<>());
+    }
+    
+    int calculateScore() {
+        return rows.stream()
+                .flatMap(row -> row.stream())
+                .filter(Predicate.not(marks::contains))
+                .mapToInt(Integer::intValue)
+                .sum() * marks.get(marks.size() - 1);
+    }
 
-    public Tile(int number) {
-        this.number = number;
+    void mark(int number) {
+        marks.add(number);
+    }
+
+    boolean hasWinningColumn() {
+        return IntStream.range(0, rows.get(0).size())
+                .mapToObj(i -> rows.stream().map(row -> row.get(i)).toList())
+                .anyMatch(column -> marks.containsAll(column));
+    }
+
+    boolean hasWinningRow() {
+        return rows.stream().anyMatch(row -> marks.containsAll(row));
     }
 }

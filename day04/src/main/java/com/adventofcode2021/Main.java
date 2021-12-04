@@ -26,7 +26,7 @@ public class Main {
         var board = new Board();
 
         for (var line : lines.subList(2, lines.size())) {
-            if ("".equals(line)) {
+            if(line.isBlank()) {
                 boards.add(board);
                 board = new Board();
             } else {

@@ -30,7 +30,6 @@ public class Main {
             System.arraycopy(arr, 1, arr, 0, 8);
             arr[6] += zeroes;
             arr[8]  = zeroes;
-
         }
         
         return Arrays.stream(arr).sum();

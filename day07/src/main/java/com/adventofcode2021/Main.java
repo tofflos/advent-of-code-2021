@@ -25,20 +25,20 @@ public class Main {
         }));
     }
 
-    static long calculate(int[] crabs, BiFunction<Integer, Integer, Integer> grr) {
+    static long calculate(int[] crabs, BiFunction<Integer, Integer, Integer> cost) {
         var min = 0;
         var max = Arrays.stream(crabs).max().orElseThrow();
         var result = Integer.MAX_VALUE;
 
         for (int i = min; i < max; i++) {
-            var cost = 0;
+            var sum = 0;
 
             for (int j = 0; j < crabs.length; j++) {
-                cost += grr.apply(crabs[j], i);
+                sum += cost.apply(crabs[j], i);
             }
 
-            if (cost < result) {
-                result = cost;
+            if (sum < result) {
+                result = sum;
             }
         }
 

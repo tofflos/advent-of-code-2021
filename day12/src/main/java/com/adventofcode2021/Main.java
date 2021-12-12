@@ -28,7 +28,6 @@ public class Main {
         System.out.println("Part 2: " + solve(caves, (visited, next) -> {
             var frequencies = visited.stream().filter(Main::isSmall).collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
             
-
             return !"start".equals(next) && (isBig(next) || !visited.contains(next) || frequencies.values().stream().noneMatch(frequency -> frequency > 1));
         }));
     }

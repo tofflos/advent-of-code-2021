@@ -24,8 +24,8 @@ public class Main {
                 })
                 .collect(Collectors.groupingBy(t -> t[0], Collectors.mapping(t -> t[1], Collectors.toSet())));
 
-        System.out.println("Part 1: " + solve(caves, (visited, next) -> !visited.contains(next) || isBig(next)));
-        System.out.println("Part 2: " + solve(caves, (visited, next) -> {
+        System.out.println("Part 1: " + traverse(caves, (visited, next) -> !visited.contains(next) || isBig(next)));
+        System.out.println("Part 2: " + traverse(caves, (visited, next) -> {
             var frequencies = visited.stream().filter(Main::isSmall).collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
             
             return !"start".equals(next) && (isBig(next) || !visited.contains(next) || frequencies.values().stream().noneMatch(frequency -> frequency > 1));
@@ -40,7 +40,7 @@ public class Main {
         return Character.isLowerCase(cave.charAt(0)) && !"start".equals(cave) && !"end".equals(cave);
     }
     
-    static int solve(Map<String, Set<String>> caves, BiPredicate<Deque<String>, String> isVisitable) {
+    static int traverse(Map<String, Set<String>> caves, BiPredicate<Deque<String>, String> isVisitable) {
         var candidates = new ArrayDeque<Deque<String>>();
         var paths = new ArrayDeque<Deque<String>>();
 
@@ -57,7 +57,7 @@ public class Main {
 
             for (var neighbour : caves.get(cave)) {
                 if (isVisitable.test(visited, neighbour)) {
-                    var candidate = new ArrayDeque<String>(visited);
+                    var candidate = new ArrayDeque<>(visited);
                     candidate.push(neighbour);
 
                     candidates.push(candidate);

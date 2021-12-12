@@ -42,7 +42,7 @@ public class Main {
         return Character.isLowerCase(name.charAt(0)) && !"start".equals(name) && !"end".equals(name);
     }
     
-    static int solve(Map<String, Set<String>> caverns, BiPredicate<Deque<String>, String> predicate) {
+    static int solve(Map<String, Set<String>> caves, BiPredicate<Deque<String>, String> predicate) {
         var branches = new ArrayDeque<Deque<String>>();
         var paths = new ArrayDeque<Deque<String>>();
 
@@ -57,7 +57,7 @@ public class Main {
                 continue;
             }
 
-            for (var next : caverns.get(current)) {
+            for (var next : caves.get(current)) {
                 if (predicate.test(branch, next)) {
                     var b = new ArrayDeque<String>(branch);
                     b.push(next);

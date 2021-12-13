@@ -49,10 +49,10 @@ public class Main {
         }
 
         System.out.println("Part 2:");
-        System.out.println(render(part2));
+        System.out.println(toString(part2));
     }
 
-    static String render(String[][] paper) {
+    static String toString(String[][] paper) {
         return Arrays.stream(paper)
                 .map(row -> Arrays.stream(row).collect(Collectors.joining()))
                 .collect(Collectors.joining(System.getProperty("line.separator")));
@@ -81,7 +81,6 @@ public class Main {
         Arrays.stream(right).forEach(row -> {
             var t = Arrays.asList(row);
             Collections.reverse(t);
-
         });
 
         for (int y = 0; y < left.length; y++) {
@@ -92,5 +91,4 @@ public class Main {
 
         return left;
     }
-
 }

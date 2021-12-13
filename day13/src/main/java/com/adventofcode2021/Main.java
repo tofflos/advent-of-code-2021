@@ -26,7 +26,7 @@ public class Main {
             }
 
             if (line.startsWith("fold along ")) {
-                var t = line.substring(0 + "fold along ".length()).split("=");
+                var t = line.substring("fold along ".length()).split("=");
                 folds.add(new Object[]{t[0], Integer.parseInt(t[1])});
             }
         }

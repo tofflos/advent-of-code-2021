@@ -3,7 +3,7 @@ package com.adventofcode2021;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -12,28 +12,16 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         var lines = Files.readAllLines(Paths.get("18.in"));
-        var magnitude = lines.stream().map(Node::of).reduce((left, right) -> Node.reduce(Node.add(left, right))).map(Node::magnitude).orElseThrow();
+        var magnitude = lines.stream().map(Node::of)
+                .reduce((left, right) -> Node.reduce(Node.add(left, right)))
+                .map(Node::magnitude).orElseThrow();
 
         System.out.println("Part 1: " + magnitude);
         
-        var max = Long.MIN_VALUE;
-        
-        for (var  line1 : lines) {
-            for (var line2 : lines) {
-                var root1 = Node.of(line1);
-                var root2 = Node.of(line2);
-                
-                var sum = Node.add(root1, root2);
-                Node.reduce(sum);
-                
-                var m = Node.magnitude(sum);
-                
-                if(m > max) {
-                    max = m;
-                }
-            }
-        }
-        
+        var max = lines.stream()
+                .flatMap(left -> lines.stream().map(right -> Node.reduce(Node.add(Node.of(left), Node.of(right)))))
+                .mapToInt(Node::magnitude).max().orElseThrow();
+
         System.out.println("Part 2: " + max);
     }
 }
